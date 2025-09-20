@@ -1,0 +1,41 @@
+name: Repo Sync
+
+on:
+  schedule: 
+    - cron: "0 */6 * * *" # Her 6 saatte bir çalışır
+  workflow_dispatch: # Manuel olarak çalıştırmak için
+
+jobs:
+  repo-sync:
+    name: Repo Sync
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Public Repo'yu Checkout Et
+      - name: Checkout Public Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Private Repo'yu Klonla
+      - name: Clone Private Repo
+        run: |
+          git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/PRIVATE_REPO.git private-repo
+        env:
+          GIT_TERMINAL_PROMPT: 0
+          GIT_ASKPASS: /bin/echo
+
+      # 3. Private Repo Kodlarını Public Repo'ya Kopyala
+      - name: Sync Private Repo Files
+        run: |
+          rsync -av --delete private-repo/ ./
+          rm -rf private-repo
+
+      # 4. Değişiklikleri Commit ve Push Et
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Private repo'dan senkronizasyon"
+          git push
