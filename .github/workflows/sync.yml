@@ -20,7 +20,7 @@ jobs:
       # 2. Private Repo'yu Klonla
       - name: Clone Private Repo
         run: |
-          git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/PRIVATE_REPO.git private-repo
+          git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
         env:
           GIT_TERMINAL_PROMPT: 0
           GIT_ASKPASS: /bin/echo
