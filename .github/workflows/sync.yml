@@ -2,7 +2,7 @@ name: Repo Sync
 
 on:
   schedule: 
-    - cron: "0 */6 * * *" # Her 6 saatte bir çalışır
+    - cron: "0 */6 * * *" # Her 6 saatte bir çalışır (00:00, 06:00, 12:00, 18:00)
   workflow_dispatch: # Manuel olarak çalıştırmak için
 
 jobs:
@@ -28,10 +28,14 @@ jobs:
       # 3. Private Repo Kodlarını Public Repo'ya Kopyala
       - name: Sync Private Repo Files
         run: |
-          rsync -av --delete private-repo/ ./
+          rsync -av --delete --ignore-missing-args private-repo/ ./ || true
+
+      # 4. Private Repo Klasörünü Temizle
+      - name: Remove Temporary Clone
+        run: |
           rm -rf private-repo
 
-      # 4. Değişiklikleri Commit ve Push Et
+      # 5. Değişiklikleri Commit ve Push Et
       - name: Commit and Push Changes
         run: |
           git config user.name "github-actions[bot]"
