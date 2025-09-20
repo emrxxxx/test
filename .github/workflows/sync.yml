@@ -2,30 +2,28 @@ name: Sync Private Repo
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # Her 6 saatte bir çalışır
-  workflow_dispatch: # Manuel olarak da çalıştırma seçeneği ekler
+    - cron: "0 */6 * * *" # Her 6 saatte bir otomatik çalışır
+  workflow_dispatch: # Manuel olarak başlatma seçeneği ekler
 
 jobs:
   sync-private-repo:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Repo'yu Checkout Et
+      # 1. Public Repo'yu Checkout Et
+      - name: Public Repo'yu Checkout Et
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # 2. Private Repo'yu Klonla
       - name: Private Repo'yu Klonla
         run: |
-          git clone https://github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
-        env:
-          GIT_TERMINAL_PROMPT: 0
-          GIT_ASKPASS: /bin/echo
-          GITHUB_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
 
-      - name: Private Repo'dan Kodları Çalıştır
+      # 3. Private Repo İçindeki Kodları Çalıştır
+      - name: Private Repo Kodlarını Çalıştır
         run: |
           cd private-repo
-          # Örnek: script çalıştır
           npm install
           npm run build
