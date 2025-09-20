@@ -2,28 +2,42 @@ name: Sync Private Repo
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # Her 6 saatte bir otomatik çalışır
-  workflow_dispatch: # Manuel olarak başlatma seçeneği ekler
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
 
 jobs:
   sync-private-repo:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Public Repo'yu Checkout Et
-      - name: Public Repo'yu Checkout Et
+      - name: Checkout Public Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2. Private Repo'yu Klonla
-      - name: Private Repo'yu Klonla
+      - name: Clone Private Repo
         run: |
           git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
 
-      # 3. Private Repo İçindeki Kodları Çalıştır
-      - name: Private Repo Kodlarını Çalıştır
+      - name: Update config.json
         run: |
           cd private-repo
-          npm install
-          npm start
+          jq \
+            --arg TOKENS "${{ secrets.TOKENS }}" \
+            --arg DISCORD_BOT_TOKEN "${{ secrets.DISCORD_BOT_TOKEN }}" \
+            --arg CH_IDS "${{ secrets.CH_IDS }}" \
+            --arg WEBHOOKS "${{ secrets.WEBHOOKS }}" \
+            --arg DEFAULT_PRESENCE "${{ secrets.DEFAULT_PRESENCE }}" \
+            '
+            .tokens = ($TOKENS | split(",")) |
+            .discordBotToken = $DISCORD_BOT_TOKEN |
+            .CH_IDS = ($CH_IDS | split(",")) |
+            .webhookUrls = ($WEBHOOKS | split(",")) |
+            .DEFAULT_PRESENCE = $DEFAULT_PRESENCE
+            ' config/config.json > config/tmp.json && mv config/tmp.json config/config.json
+
+      - name: Run Private Repo Bot
+        run: |
+          cd private-repo
+          npm install --production
+          timeout 21540 node main.js || true
