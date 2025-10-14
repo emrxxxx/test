@@ -23,7 +23,8 @@ jobs:
         run: |
           cd private-repo
           mkdir -p logs
-          timeout 21540 node . > logs/out.log 2> logs/err.log || true
+          node . > logs/out.log 2> logs/err.log &
+          wait
 
       - name: Upload logs as artifact
         if: always()
