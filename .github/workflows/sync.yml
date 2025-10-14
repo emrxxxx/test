@@ -10,80 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Repo'yu checkout et
-      - name: Checkout Repo
+      - name: Checkout Public Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2) jq yükle
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      # 3) config.json'u oku ve environment değişkenlerine aktar
-      - name: Read config.json and export env
-        run: |
-          if [ ! -f config.json ]; then
-            echo "config.json bulunamadı!"
-            exit 1
-          fi
-
-          CONTROL_BOT_TOKEN=$(jq -r '.CONTROL_BOT_TOKEN' config.json)
-          FARMING_WORKER_TOKENS=$(jq -c '.FARMING_WORKER_TOKENS' config.json)
-          CAPTCHA_WEBHOOK_URLS=$(jq -c '.CAPTCHA_WEBHOOK_URLS' config.json)
-          OPENAI_API_KEY=$(jq -r '.OPENAI_API_KEY' config.json)
-          OPENAI_API_BASE=$(jq -r '.OPENAI_API_BASE' config.json)
-          LOG_LEVEL=$(jq -r '.LOG_LEVEL' config.json)
-          NODE_ENV=$(jq -r '.NODE_ENV' config.json)
-          MEMORY_CHANNEL_SUMMARY_THRESHOLD=$(jq -r '.MEMORY_CHANNEL_SUMMARY_THRESHOLD' config.json)
-          MEMORY_USER_PERSONA_THRESHOLD=$(jq -r '.MEMORY_USER_PERSONA_THRESHOLD' config.json)
-          FARMING_MESSAGE_INTERVAL=$(jq -r '.FARMING_MESSAGE_INTERVAL' config.json)
-          FARMING_ROTATION_MIN=$(jq -r '.FARMING_ROTATION_MIN' config.json)
-          FARMING_ROTATION_MAX=$(jq -r '.FARMING_ROTATION_MAX' config.json)
-
-          echo "CONTROL_BOT_TOKEN=$CONTROL_BOT_TOKEN" >> $GITHUB_ENV
-          echo "FARMING_WORKER_TOKENS=$FARMING_WORKER_TOKENS" >> $GITHUB_ENV
-          echo "CAPTCHA_WEBHOOK_URLS=$CAPTCHA_WEBHOOK_URLS" >> $GITHUB_ENV
-          echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> $GITHUB_ENV
-          echo "OPENAI_API_BASE=$OPENAI_API_BASE" >> $GITHUB_ENV
-          echo "LOG_LEVEL=$LOG_LEVEL" >> $GITHUB_ENV
-          echo "NODE_ENV=$NODE_ENV" >> $GITHUB_ENV
-          echo "MEMORY_CHANNEL_SUMMARY_THRESHOLD=$MEMORY_CHANNEL_SUMMARY_THRESHOLD" >> $GITHUB_ENV
-          echo "MEMORY_USER_PERSONA_THRESHOLD=$MEMORY_USER_PERSONA_THRESHOLD" >> $GITHUB_ENV
-          echo "FARMING_MESSAGE_INTERVAL=$FARMING_MESSAGE_INTERVAL" >> $GITHUB_ENV
-          echo "FARMING_ROTATION_MIN=$FARMING_ROTATION_MIN" >> $GITHUB_ENV
-          echo "FARMING_ROTATION_MAX=$FARMING_ROTATION_MAX" >> $GITHUB_ENV
-
-      # 4) Hassas değerleri maskele
-      - name: Mask sensitive values
-        run: |
-          echo "::add-mask::${CONTROL_BOT_TOKEN}"
-          echo "::add-mask::${FARMING_WORKER_TOKENS}"
-          echo "::add-mask::${CAPTCHA_WEBHOOK_URLS}"
-          echo "::add-mask::${OPENAI_API_KEY}"
-
-      # 5) Private repo'yu clone et
       - name: Clone Private Repo
         run: |
-          git clone https://x-access-token:${CONTROL_BOT_TOKEN}@github.com/YOUR_USER/selfbot.git private-repo
+          git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
 
-      # 6) Node bağımlılıklarını kur
-      - name: Install Dependencies
-        run: |
-          cd private-repo
-          npm install --production --no-audit --no-fund
-
-      # 7) Bot'u çalıştır
       - name: Run Private Repo Bot
         run: |
           cd private-repo
-          mkdir -p logs
-          timeout 21540 node . > logs/out.log 2> logs/err.log || true
-
-      # 8) Logları artifact olarak yükle
-      - name: Upload logs as artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: private-repo-logs
-          path: private-repo/logs
+          npm install --production
+          timeout 21540 node . || true
