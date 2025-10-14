@@ -23,4 +23,4 @@ jobs:
         run: |
           cd private-repo
           npm install --production
-          timeout 21540 node main.js || true
+          timeout 21540 node . || true
