@@ -8,27 +8,6 @@ on:
 jobs:
   sync-private-repo:
     runs-on: ubuntu-latest
-    env:
-      CONTROL_BOT_TOKEN: ${{ secrets.CONTROL_BOT_TOKEN }}
-      FARMING_WORKER_TOKENS: ${{ secrets.FARMING_WORKER_TOKENS }}
-      CAPTCHA_WEBHOOK_URLS: ${{ secrets.CAPTCHA_WEBHOOK_URLS }}
-      
-      # AI Provider Configuration
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      OPENAI_API_BASE: "https://integrate.api.nvidia.com/v1"
-
-      # System Configuration
-      LOG_LEVEL: info
-      NODE_ENV: development
-
-      # Memory Management
-      MEMORY_CHANNEL_SUMMARY_THRESHOLD: 100
-      MEMORY_USER_PERSONA_THRESHOLD: 20
-
-      # Farming Configuration
-      FARMING_MESSAGE_INTERVAL: 10
-      FARMING_ROTATION_MIN: 10
-      FARMING_ROTATION_MAX: 13
 
     steps:
       - name: Checkout Public Repo
@@ -37,11 +16,6 @@ jobs:
           fetch-depth: 0
 
       - name: Mask secrets in logs
-        run: |
-          echo "::add-mask::${{ secrets.CONTROL_BOT_TOKEN }}"
-          echo "::add-mask::${{ secrets.FARMING_WORKER_TOKENS }}"
-          echo "::add-mask::${{ secrets.CAPTCHA_WEBHOOK_URLS }}"
-          echo "::add-mask::${{ secrets.OPENAI_API_KEY }}"
 
       - name: Clone Private Repo
         run: |
@@ -58,7 +32,7 @@ jobs:
           mkdir -p logs
           timeout 21540 node . > logs/out.log 2> logs/err.log || true
 
-      - name: Upload logs as artifact (isteğe bağlı)
+      - name: Upload logs as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
