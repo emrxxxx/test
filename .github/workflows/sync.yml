@@ -10,16 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1) Repo'yu checkout et
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # 2) jq yükle
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Read config.json and set variables
+      # 3) config.json'u oku ve environment değişkenlerine aktar
+      - name: Read config.json and export env
         run: |
+          if [ ! -f config.json ]; then
+            echo "config.json bulunamadı!"
+            exit 1
+          fi
+
           CONTROL_BOT_TOKEN=$(jq -r '.CONTROL_BOT_TOKEN' config.json)
           FARMING_WORKER_TOKENS=$(jq -c '.FARMING_WORKER_TOKENS' config.json)
           CAPTCHA_WEBHOOK_URLS=$(jq -c '.CAPTCHA_WEBHOOK_URLS' config.json)
@@ -46,6 +54,7 @@ jobs:
           echo "FARMING_ROTATION_MIN=$FARMING_ROTATION_MIN" >> $GITHUB_ENV
           echo "FARMING_ROTATION_MAX=$FARMING_ROTATION_MAX" >> $GITHUB_ENV
 
+      # 4) Hassas değerleri maskele
       - name: Mask sensitive values
         run: |
           echo "::add-mask::${CONTROL_BOT_TOKEN}"
@@ -53,21 +62,25 @@ jobs:
           echo "::add-mask::${CAPTCHA_WEBHOOK_URLS}"
           echo "::add-mask::${OPENAI_API_KEY}"
 
+      # 5) Private repo'yu clone et
       - name: Clone Private Repo
         run: |
-          git clone https://x-access-token:$CONTROL_BOT_TOKEN@github.com/YOUR_USER/selfbot.git private-repo
+          git clone https://x-access-token:${CONTROL_BOT_TOKEN}@github.com/YOUR_USER/selfbot.git private-repo
 
+      # 6) Node bağımlılıklarını kur
       - name: Install Dependencies
         run: |
           cd private-repo
           npm install --production --no-audit --no-fund
 
+      # 7) Bot'u çalıştır
       - name: Run Private Repo Bot
         run: |
           cd private-repo
           mkdir -p logs
           timeout 21540 node . > logs/out.log 2> logs/err.log || true
 
+      # 8) Logları artifact olarak yükle
       - name: Upload logs as artifact
         if: always()
         uses: actions/upload-artifact@v4
