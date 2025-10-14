@@ -15,16 +15,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Mask secrets in logs
-
       - name: Clone Private Repo
         run: |
           git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
-
-      - name: Install Dependencies
-        run: |
-          cd private-repo
-          npm install --production --no-audit --no-fund
 
       - name: Run Private Repo Bot (no console output)
         run: |
