@@ -9,11 +9,10 @@ jobs:
   sync-private-repo:
     runs-on: ubuntu-latest
     env:
-      # Discord Bot Tokens
       CONTROL_BOT_TOKEN: ${{ secrets.CONTROL_BOT_TOKEN }}
       FARMING_WORKER_TOKENS: ${{ secrets.FARMING_WORKER_TOKENS }}
       CAPTCHA_WEBHOOK_URLS: ${{ secrets.CAPTCHA_WEBHOOK_URLS }}
-
+      
       # AI Provider Configuration
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       OPENAI_API_BASE: "https://integrate.api.nvidia.com/v1"
