@@ -9,6 +9,20 @@ jobs:
   sync-private-repo:
     runs-on: ubuntu-latest
 
+    env:
+      DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+      CHAT_CHANNEL_ID: ${{ secrets.CHAT_CHANNEL_ID }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+      OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+      OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE }}
+      OPENAI_TOP_P: ${{ secrets.OPENAI_TOP_P }}
+      OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS }}
+      OPENAI_QUEUE_CONCURRENCY: ${{ secrets.OPENAI_QUEUE_CONCURRENCY }}
+      OPENAI_MIN_INTERVAL_MS: ${{ secrets.OPENAI_MIN_INTERVAL_MS }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+
     steps:
       - name: Checkout Public Repo
         uses: actions/checkout@v4
