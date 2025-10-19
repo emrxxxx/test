@@ -19,6 +19,6 @@ jobs:
       - run: npm install debug
 
       - env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DISCORD_TOKEN: ${{ secrets.DC_TOKEN }}
           ONLINE_SECONDS: 14400
         run: npm start
