@@ -1,8 +1,8 @@
-name: Discord 4h-idle bot
+name: Discord Idle Bot
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Her 6 saatte bir (4 saat idle, 2 saat offline)
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -10,15 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - run: npm install
-      - run: npm install debug
-
+      - run: npm ci
       - env:
-          DISCORD_TOKEN: ${{ secrets.DC_TOKEN }}
+          DC_TOKEN: ${{ secrets.DC_TOKEN }}
           ONLINE_SECONDS: 14400
         run: npm start
