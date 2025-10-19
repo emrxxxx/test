@@ -16,6 +16,7 @@ jobs:
           node-version: '20'
 
       - run: npm install
+      - run: npm install debug
 
       - env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
