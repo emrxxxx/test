@@ -4,7 +4,7 @@ const token = process.env.DC_TOKEN;
 const onlineSeconds = parseInt(process.env.ONLINE_SECONDS || "14400", 10); // 4 saat
 
 if (!token) {
-  console.error("DISCORD_TOKEN environment variable is missing.");
+  console.error("DC_TOKEN environment variable is missing.");
   process.exit(1);
 }
 
