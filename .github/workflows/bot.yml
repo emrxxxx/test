@@ -13,7 +13,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm ci
+      - run: npm install # Generate package-lock.json
+      - run: npm ci # Use package-lock.json for deterministic install
       - env:
           DC_TOKEN: ${{ secrets.DC_TOKEN }}
           ONLINE_SECONDS: 14400
