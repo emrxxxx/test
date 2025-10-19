@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ActivityType } = require("discord.js");
+const { Client } = require('discord.js-selfbot-v13');
 
 const token = process.env.DC_TOKEN;
 const onlineSeconds = parseInt(process.env.ONLINE_SECONDS || "14400", 10); // 4 saat
@@ -8,9 +8,7 @@ if (!token) {
   process.exit(1);
 }
 
-const client = new Client({
-  intents: []
-});
+const client = new Client();
 
 client.once("ready", async () => {
   console.log(`Online`);
