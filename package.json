@@ -6,7 +6,8 @@
     "start": "node bot.js"
   },
   "dependencies": {
-    "discord.js-selfbot-v13": "^3.7.1"
+    "discord.js-selfbot-v13": "^3.7.1",
+    "debug": "^4.3.7"
   },
   "engines": {
     "node": ">=20"
