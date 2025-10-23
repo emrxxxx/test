@@ -11,10 +11,10 @@ jobs:
 
     env:
       DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-      USER_TOKENS: ${{ secrets.DISCORD_CLIENT_ID }}
-      CHANNEL_IDS: ${{ secrets.CHAT_CHANNEL_ID }}
+      USER_TOKENS: ${{ secrets.USER_TOKENS }}
+      CHANNEL_IDS: ${{ secrets.CHANNEL_IDS }}
       OWO_ID: 408785106942164992
-      WEBHOOK_URLS: ${{ secrets.OPENAI_BASE_URL }}
+      WEBHOOK_URLS: ${{ secrets.WEBHOOK_URLS }}
       DEFAULT_PRESENCE: invisible
       ENABLE_CONSOLE_LOG: false
 
