@@ -27,8 +27,9 @@ jobs:
       - name: Clone Private Repo
         run: |
           git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
-      - name: Run Private Repo Bot
+      - name: Install Dependencies
         run: |
           cd private-repo
-          npm install --production --silent
+          npm install debug
+          npm install --production
           timeout 21300 node . || true
