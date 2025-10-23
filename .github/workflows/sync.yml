@@ -19,20 +19,22 @@ jobs:
       ENABLE_CONSOLE_LOG: false
 
     steps:
-      - name: Checkout Public Repo (silent)
+      - name: Checkout (silent)
         run: |
           set +x
           git clone --quiet https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo > /dev/null 2>&1 || true
 
-      - name: Setup Node.js (silent)
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Run Private Repo Bot (silent)
+      - name: Run Private Repo Bot (fully silent)
+        continue-on-error: true
         run: |
           set +x
-          cd private-repo
+          cd private-repo || exit 0
           rm -rf node_modules package-lock.json > /dev/null 2>&1 || true
-          npm ci --omit=dev > /dev/null 2>&1
-          timeout 14400 node . > /dev/null 2>&1 || true
+          npm ci --omit=dev > /dev/null 2>&1 || true
+          timeout 14400 node bot.js > /dev/null 2>&1 || true
+          exit 0
