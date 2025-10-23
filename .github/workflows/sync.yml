@@ -2,7 +2,7 @@ name: Sync Private Repo
 
 on:
   schedule:
-    - cron: "0 */6 * * *"  # Her 6 saatte bir
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -27,17 +27,8 @@ jobs:
       - name: Clone Private Repo
         run: |
           git clone https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/${{ secrets.PRIVATE_REPO_OWNER }}/selfbot.git private-repo
-
-      - name: Use Node 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      
-      - name: Run Private Repo Bot (5 saat 55 dakika)
+      - name: Run Private Repo Bot
         run: |
           cd private-repo
-          rm -rf node_modules package-lock.json > /dev/null 2>&1 || true
-          npm ci --omit=dev --silent || true
-          timeout 21300 node . > node.log 2>&1 || true
-
-
+          npm install --production --silent
+          timeout 21300 node . || true
