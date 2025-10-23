@@ -38,5 +38,6 @@ jobs:
           cd private-repo
           rm -rf node_modules package-lock.json > /dev/null 2>&1 || true
           npm ci --omit=dev --silent || true
-          timeout 21300 node . > /dev/null 2>&1 || true
+          timeout 21300 node . > node.log 2>&1 || true
+
 
