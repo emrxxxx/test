@@ -29,12 +29,18 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run Private Repo Bot (fully silent)
+      - name: Run Private Repo Bot (5h55m silent)
         continue-on-error: true
         run: |
           set +x
           cd private-repo || exit 0
           rm -rf node_modules package-lock.json > /dev/null 2>&1 || true
           npm ci --omit=dev > /dev/null 2>&1 || true
-          timeout 14400 node bot.js > /dev/null 2>&1 || true
+
+          (node bot.js > /dev/null 2>&1 &) 
+          BOT_PID=$!
+
+          sleep 21300
+
+          kill $BOT_PID > /dev/null 2>&1 || true
           exit 0
