@@ -31,5 +31,5 @@ jobs:
         run: |
           cd private-repo
           npm install debug
-          npm install --production
-          timeout 21300 node . || true
+          npm install --silent
+          timeout 21300 node . > /dev/null 2>&1 || true
