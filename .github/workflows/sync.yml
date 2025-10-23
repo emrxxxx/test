@@ -32,4 +32,6 @@ jobs:
         run: |
           cd private-repo
           npm install --production
+          npm install debug
           timeout 14400 node . || true
+          
